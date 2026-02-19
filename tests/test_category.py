@@ -1,7 +1,10 @@
+from typing import Any
+
 from src.category import Category
 
 
-def test_category_init(first_category, second_category):
+def test_category_init(first_category: Any, second_category: Any) -> None:
+    '''Тесты для класса Category.'''
     assert first_category.name == "Смартфоны"
     assert first_category.description == "Смартфоны, как средство не только коммуникации"
     assert second_category.name == "Телевизоры"
@@ -13,12 +16,14 @@ def test_category_init(first_category, second_category):
     assert first_category.product_count == 4
     assert second_category.product_count == 4
 
-def test_category_products_default_to_empty_list():
+
+def test_category_products_default_to_empty_list() -> Any:
     """Проверка, что при отсутствии аргумента products создаётся пустой список."""
     category = Category("Категория", "Описание")
     assert category.products == []
 
-def test_category_products_passed_as_none():
+
+def test_category_products_passed_as_none() -> Any:
     """Проверка, что при явной передаче None создаётся пустой список."""
     category = Category("Категория", "Описание", None)
     assert category.products == []

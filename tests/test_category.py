@@ -57,7 +57,7 @@ def test_add_product(sample_category: Category) -> None:
 def test_products_property(sample_category: Category) -> None:
     """Проверяет, что свойство products возвращает корректную строку."""
     cat = sample_category
-    expected = "\nProduct1, 5 Остаток: 50\nProduct2, 200 Остаток: 150"
+    expected = "\nProduct1, 5 руб. Остаток: 50 шт.\nProduct2, 200 руб. Остаток: 150 шт."
     assert cat.products == expected
 
 
@@ -76,5 +76,9 @@ def test_add_product_updates_products_property(sample_category: Category) -> Non
     cat = sample_category
     new_product = Product("Product3", "description3", 300, 7)
     cat.add_product(new_product)
-    expected = "\nProduct1, 5 Остаток: 50\nProduct2, 200 Остаток: 150\nProduct3, 300 Остаток: 7"
+    expected = (
+        "\nProduct1, 5 руб. Остаток: 50 шт."
+        "\nProduct2, 200 руб. Остаток: 150 шт."
+        "\nProduct3, 300 руб. Остаток: 7 шт."
+    )
     assert cat.products == expected

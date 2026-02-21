@@ -19,9 +19,9 @@ class Category:
     def products(self) -> Any:
         products_str = ""
         for product in self.__products:
-            products_str += f"\n{product.name}, {product.price} Остаток: {product.quantity}"
+            products_str += (f"\n{product.name}, {product.price} руб. Остаток: {product.quantity} шт.")
         return products_str
 
     def add_product(self, product: Product) -> None:
         Category.product_count += 1
-        return self.__products.append(product)
+        self.__products.append(product)

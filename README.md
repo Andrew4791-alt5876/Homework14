@@ -70,8 +70,15 @@ print(Category.product_count)    # 2
 │ └── product.py # Класс Product
 ├── tests/
 │ ├── init.py
+│ ├── conftest.py  # Модуль ля фикстур
 │ ├── test_category.py # Тесты для Category
 │ └── test_product.py # Тесты для Product
+├── .flake8
+├── .gitignore
+├── main.py
+├── poetry.lock
+├── poetry.toml
+├── pyproject.toml
 ├── README.md
 └── requirements.txt # (опционально) зависимости
 

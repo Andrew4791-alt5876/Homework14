@@ -40,3 +40,11 @@ class Product:
                 self.__price = new_price
         else:
             print("Цена не должна быть нулевая или отрицательная")
+
+    def __str__(self) -> str:
+        """Магический метод для отображения информации об объекте класса Product."""
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: Any) -> Any:
+        """Магический метод, который позволяет прибавлять к экземпляру класса объект произвольного типа данных."""
+        return (self.__price * self.quantity) + (other.__price * other.quantity)

@@ -2,12 +2,8 @@ from typing import Any
 
 
 class Product:
-    name: str
-    description: str
-    price: float
-    quantity: int
 
-    def __init__(self, name, description, price, quantity) -> None:
+    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
         """Инициализатор или конструктор."""
         self.name = name
         self.description = description
@@ -51,4 +47,6 @@ class Product:
 
     def __add__(self, other: Any) -> Any:
         """Магический метод, который позволяет прибавлять к экземпляру класса объект произвольного типа данных."""
+        if type(self) is not type(other):
+            raise TypeError
         return (self.__price * self.quantity) + (other.__price * other.quantity)

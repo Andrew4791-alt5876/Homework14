@@ -4,7 +4,7 @@ from typing import Any
 class Product:
 
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
-        """Инициализатор или конструктор."""
+        """Инициализатор или конструктор класса Product."""
         self.name = name
         self.description = description
         self.__price = price

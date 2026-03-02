@@ -13,7 +13,7 @@ class LawnGrass(Product):
         germination_period: str,
         color: str,
     ) -> None:
-        """Конструктор"""
+        """Конструктор подкласса LawnGrass от родительского класса Product."""
         super().__init__(name, description, price, quantity)
         self.country = country
         self.germination_period = germination_period

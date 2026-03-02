@@ -6,7 +6,7 @@ class Category:
     product_count = 0
 
     def __init__(self, name: str, description: str, products: list) -> None:
-        """Инициализатор или конструктор."""
+        """Инициализатор или конструктор класса Category."""
         self.name = name
         self.description = description
         self.__products = products if products else []

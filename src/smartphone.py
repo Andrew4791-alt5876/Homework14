@@ -14,7 +14,7 @@ class Smartphone(Product):
         memory: int,
         color: str,
     ) -> None:
-        """Конструктор"""
+        """Конструктор подкласса Smartphone от родительского класса Product."""
         super().__init__(name, description, price, quantity)
         self.efficiency = efficiency
         self.model = model

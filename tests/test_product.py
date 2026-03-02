@@ -1,82 +1,107 @@
+from typing import Any
+
 import pytest
-from _pytest.capture import CaptureFixture
 from _pytest.monkeypatch import MonkeyPatch
 
 from src.product import Product
 
 
-class TestProduct:
-    def test_init(self, sample_product: Product) -> None:
-        """Проверка инициализации продукта."""
-        assert sample_product.name == "Телефон"
-        assert sample_product.description == "Смартфон"
-        assert sample_product.price == 50000.0
-        assert sample_product.quantity == 10
+def test_product_initialization(sample_product: Product) -> None:
+    """Проверка инициализации атрибутов продукта."""
+    assert sample_product.name == "Тестовый продукт"
+    assert sample_product.description == "Описание тестового продукта"
+    assert sample_product.price == 100.0  # через геттер
+    assert sample_product.quantity == 10
 
-    def test_new_product(self, sample_product_dict: dict) -> None:
-        """Проверка создания продукта из словаря."""
-        product = Product.new_product(sample_product_dict)
-        assert product.name == "Ноутбук"
-        assert product.description == "Мощный ноутбук"
-        assert product.price == 120000.0
-        assert product.quantity == 5
-        assert isinstance(product, Product)
 
-    def test_price_getter(self, sample_product: Product) -> None:
-        """Геттер возвращает корректное значение."""
-        assert sample_product.price == 50000.0
+def test_new_product_classmethod() -> None:
+    """Проверка создания продукта из словаря."""
+    data = {"name": "Словарный продукт", "description": "Создан через classmethod", "price": 200.0, "quantity": 3}
+    product = Product.new_product(data)
+    assert isinstance(product, Product)
+    assert product.name == "Словарный продукт"
+    assert product.description == "Создан через classmethod"
+    assert product.price == 200.0
+    assert product.quantity == 3
 
-    def test_price_setter_increase(self, sample_product: Product) -> None:
-        """Увеличение цены без подтверждения."""
-        sample_product.price = 60000.0
-        assert sample_product.price == 60000.0
 
-    def test_price_setter_decrease_without_confirmation(
-        self, sample_product: Product, monkeypatch: MonkeyPatch
-    ) -> None:
-        """Понижение цены с отказом пользователя (ввод 'n') — цена не меняется."""
-        # Мокаем ввод пользователя: 'n'
-        monkeypatch.setattr("builtins.input", lambda _: "n")
-        sample_product.price = 40000.0
-        assert sample_product.price == 50000.0  # цена осталась прежней
+def test_price_property_getter(sample_product: Product) -> None:
+    """Геттер возвращает приватный атрибут."""
+    assert sample_product.price == 100.0
 
-    def test_price_setter_decrease_with_confirmation(self, sample_product: Product, monkeypatch: MonkeyPatch) -> None:
-        """Понижение цены с согласием пользователя (ввод 'y') — цена меняется."""
-        monkeypatch.setattr("builtins.input", lambda _: "y")
-        sample_product.price = 40000.0
-        assert sample_product.price == 40000.0
 
-    def test_price_setter_negative(self, sample_product: Product, capsys: CaptureFixture[str]) -> None:
-        """Установка отрицательной цены — выводится сообщение и цена не меняется."""
-        sample_product.price = -1000.0
-        captured = capsys.readouterr()
-        assert captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
-        assert sample_product.price == 50000.0
+def test_price_setter_increase(sample_product: Product) -> None:
+    """Установка большей цены (без подтверждения)."""
+    sample_product.price = 150.0
+    assert sample_product.price == 150.0
 
-    def test_price_setter_zero(self, sample_product: Product, capsys: CaptureFixture[str]) -> None:
-        """Установка нулевой цены — сообщение и цена не меняется."""
-        sample_product.price = 0
-        captured = capsys.readouterr()
-        assert captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
-        assert sample_product.price == 50000.0
 
-    def test_str(self, sample_product: Product) -> None:
-        """Проверка строкового представления."""
-        expected = "Телефон, 50000.0 руб. Остаток: 10 шт."
-        assert str(sample_product) == expected
+def test_price_setter_decrease_with_confirmation_yes(sample_product: Product, monkeypatch: MonkeyPatch) -> None:
+    """Установка меньшей цены с подтверждением 'y'."""
+    monkeypatch.setattr("builtins.input", lambda _: "y")
+    sample_product.price = 80.0
+    assert sample_product.price == 80.0
 
-    def test_add(self) -> None:
-        """Проверка сложения двух продуктов."""
-        p1 = Product("A", "desc", 100.0, 2)  # 200
-        p2 = Product("B", "desc", 50.0, 3)  # 150
-        assert p1 + p2 == 350.0
 
-    def test_add_with_different_products(self) -> None:
-        p1 = Product("A", "desc", 100.0, 5)  # 500
-        p2 = Product("B", "desc", 200.0, 1)  # 200
-        assert p1 + p2 == 700.0
+def test_price_setter_decrease_with_confirmation_no(sample_product: Product, monkeypatch: MonkeyPatch) -> None:
+    """Установка меньшей цены с отказом 'n'."""
+    monkeypatch.setattr("builtins.input", lambda _: "n")
+    sample_product.price = 80.0
+    assert sample_product.price == 100.0  # цена не изменилась
 
-    def test_private_price_access(self, sample_product: Product) -> None:
-        """Проверка, что напрямую к __price обратиться нельзя."""
-        with pytest.raises(AttributeError):
-            _ = sample_product.__price
+
+def test_price_setter_negative_or_zero(sample_product: Product, capsys: Any) -> None:
+    """Попытка установить отрицательную или нулевую цену."""
+    sample_product.price = -10
+    captured = capsys.readouterr()
+    assert captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    assert sample_product.price == 100.0  # цена осталась прежней
+    sample_product.price = 0
+    captured = capsys.readouterr()
+    assert captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    assert sample_product.price == 100.0
+
+
+def test_product_str(sample_product: Product) -> None:
+    """Проверка строкового представления."""
+    expected = "Тестовый продукт, 100.0 руб. Остаток: 10 шт."
+    assert str(sample_product) == expected
+
+
+def test_product_add_same_type(sample_product: Product, another_product: Product) -> None:
+    """Сложение двух продуктов возвращает сумму их стоимостей."""
+    expected = (100.0 * 10) + (50.0 * 5)  # 1000 + 250 = 1250
+    assert sample_product + another_product == expected
+
+
+def test_product_add_different_type(sample_product: Product) -> None:
+    """Сложение продукта с объектом другого класса вызывает TypeError."""
+
+    class OtherClass:
+        pass
+
+    with pytest.raises(TypeError):
+        _ = sample_product + OtherClass()
+
+
+def test_product_add_with_non_product(sample_product: Product) -> None:
+    """Сложение с числом, строкой и т.д. вызывает TypeError."""
+    with pytest.raises(TypeError):
+        _ = sample_product + 100
+    with pytest.raises(TypeError):
+        _ = sample_product + "строка"
+    with pytest.raises(TypeError):
+        _ = sample_product + None
+
+
+def test_product_add_self(sample_product: Product) -> None:
+    """Сложение продукта с самим собой удваивает стоимость."""
+    expected = 2 * (100.0 * 10)
+    assert sample_product + sample_product == expected
+
+
+def test_product_add_zero_quantity(sample_product: Product) -> None:
+    """Если у одного из продуктов quantity = 0, результат равен стоимости другого."""
+    zero_product = Product("Ноль", "Нулевое количество", price=100, quantity=0)
+    expected = sample_product.price * sample_product.quantity
+    assert sample_product + zero_product == expected

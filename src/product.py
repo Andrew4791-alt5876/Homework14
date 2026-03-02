@@ -2,8 +2,12 @@ from typing import Any
 
 
 class Product:
+    name: str
+    description: str
+    price: float
+    quantity: int
 
-    def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+    def __init__(self, name, description, price, quantity) -> None:
         """Инициализатор или конструктор."""
         self.name = name
         self.description = description

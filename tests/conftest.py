@@ -9,13 +9,23 @@ from src.smartphone import Smartphone
 @pytest.fixture
 def sample_product() -> Product:
     """Фикстура для создания базового продукта"""
-    return Product(name="Тестовый продукт", description="Описание тестового продукта", price=100.0, quantity=10)
+    return Product(
+        name="Тестовый продукт",
+        description="Описание тестового продукта",
+        price=100.0,
+        quantity=10,
+    )
 
 
 @pytest.fixture
 def another_product() -> Product:
     """Фикстура для другого продукта (для сложения)"""
-    return Product(name="Другой продукт", description="Другое описание", price=50.0, quantity=5)
+    return Product(
+        name="Другой продукт",
+        description="Другое описание",
+        price=50.0,
+        quantity=5,
+    )
 
 
 @pytest.fixture

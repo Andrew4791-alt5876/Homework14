@@ -16,7 +16,12 @@ def test_product_initialization(sample_product: Product) -> None:
 
 def test_new_product_classmethod() -> None:
     """Проверка создания продукта из словаря."""
-    data = {"name": "Словарный продукт", "description": "Создан через classmethod", "price": 200.0, "quantity": 3}
+    data = {
+        "name": "Словарный продукт",
+        "description": "Создан через classmethod",
+        "price": 200.0,
+        "quantity": 3,
+    }
     product = Product.new_product(data)
     assert isinstance(product, Product)
     assert product.name == "Словарный продукт"
@@ -36,29 +41,39 @@ def test_price_setter_increase(sample_product: Product) -> None:
     assert sample_product.price == 150.0
 
 
-def test_price_setter_decrease_with_confirmation_yes(sample_product: Product, monkeypatch: MonkeyPatch) -> None:
+def test_price_setter_decrease_with_confirmation_yes(
+    sample_product: Product, monkeypatch: MonkeyPatch
+) -> None:
     """Установка меньшей цены с подтверждением 'y'."""
     monkeypatch.setattr("builtins.input", lambda _: "y")
     sample_product.price = 80.0
     assert sample_product.price == 80.0
 
 
-def test_price_setter_decrease_with_confirmation_no(sample_product: Product, monkeypatch: MonkeyPatch) -> None:
+def test_price_setter_decrease_with_confirmation_no(
+    sample_product: Product, monkeypatch: MonkeyPatch
+) -> None:
     """Установка меньшей цены с отказом 'n'."""
     monkeypatch.setattr("builtins.input", lambda _: "n")
     sample_product.price = 80.0
     assert sample_product.price == 100.0  # цена не изменилась
 
 
-def test_price_setter_negative_or_zero(sample_product: Product, capsys: Any) -> None:
+def test_price_setter_negative_or_zero(
+    sample_product: Product, capsys: Any
+) -> None:
     """Попытка установить отрицательную или нулевую цену."""
     sample_product.price = -10
     captured = capsys.readouterr()
-    assert captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    assert (
+        captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    )
     assert sample_product.price == 100.0  # цена осталась прежней
     sample_product.price = 0
     captured = capsys.readouterr()
-    assert captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    assert (
+        captured.out.strip() == "Цена не должна быть нулевая или отрицательная"
+    )
     assert sample_product.price == 100.0
 
 
@@ -68,7 +83,9 @@ def test_product_str(sample_product: Product) -> None:
     assert str(sample_product) == expected
 
 
-def test_product_add_same_type(sample_product: Product, another_product: Product) -> None:
+def test_product_add_same_type(
+    sample_product: Product, another_product: Product
+) -> None:
     """Сложение двух продуктов возвращает сумму их стоимостей."""
     expected = (100.0 * 10) + (50.0 * 5)  # 1000 + 250 = 1250
     assert sample_product + another_product == expected
@@ -101,7 +118,8 @@ def test_product_add_self(sample_product: Product) -> None:
 
 
 def test_product_add_zero_quantity(sample_product: Product) -> None:
-    """Если у одного из продуктов quantity = 0, результат равен стоимости другого."""
+    """Если у одного из продуктов quantity = 0,
+    результат равен стоимости другого."""
     zero_product = Product("Ноль", "Нулевое количество", price=100, quantity=0)
     expected = sample_product.price * sample_product.quantity
     assert sample_product + zero_product == expected

@@ -24,11 +24,11 @@ dev = [
 ]
 
 [tool.black]
-line-length = 119
+line_length = 79
 exclude = ".git"
 
 [tool.isort]
-line_length = 119
+line_length = 79
 
 [tool.mypy]
 disallow_untyped_defs=true

@@ -28,6 +28,7 @@ line_length = 79
 exclude = ".git"
 
 [tool.isort]
+profile = "black"
 line_length = 79
 
 [tool.mypy]

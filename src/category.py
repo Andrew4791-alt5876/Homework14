@@ -6,7 +6,7 @@ class Category:
     product_count = 0
 
     def __init__(self, name: str, description: str, products: list) -> None:
-        """Инициализатор или конструктор."""
+        """Инициализатор или конструктор класса Category."""
         self.name = name
         self.description = description
         self.__products = products if products else []
@@ -15,15 +15,18 @@ class Category:
 
     def add_product(self, product: Product) -> None:
         """Подсчет продуктов в категории."""
-        Category.product_count += 1
-        self.__products.append(product)
+        if isinstance(product, Product):
+            Category.product_count += 1
+            self.__products.append(product)
+        else:
+            raise TypeError
 
     @property
     def products(self) -> str:
         """Вывод продуктов в категории."""
         products = ""
         for product in self.__products:
-            products += f'{product}\n'
+            products += f"{product}\n"
         return products
 
     def __str__(self) -> str:
@@ -31,4 +34,4 @@ class Category:
         quantity_sum = 0
         for product in self.__products:
             quantity_sum += product.quantity
-        return f'{self.name}, количество продуктов: {quantity_sum} шт.'
+        return f"{self.name}, количество продуктов: {quantity_sum} шт."

@@ -103,6 +103,8 @@ country (str): страна-производитель
 germination_period (str): период всхожести
 color (str): цвет
 ```
+
+### 
 ## 📋 Технологии:
 
 - Python 3.8+
@@ -176,15 +178,19 @@ grass = LawnGrass("Газон", "Для дачи", 2000, 15, "Россия", "7-
 .
 ├── src/
 │ ├── __init__.py
+│ ├── base_product.py       #
 │ ├── category.py           # Базовый класс Сategory (категории продуктов) 
 │ ├── lawngrass.py          # Подкласс от класса Product (товары для озеленения)
+│ ├── print_mixin.py        # 
 │ ├── product.py            # Базовый класс Product (продуктов)
 │ └── smartphone.py         # Подкласс от класса Product (товары смартфоны)
 ├── tests/
 │ ├── __init__.py
 │ ├── conftest.py           # Модуль ля фикстур
+│ ├── test_base_product.py  #
 │ ├── test_category.py      # Тесты для Category
 │ ├── test_lawngrass.py     # Тесты для Lawngrass
+│ ├── test_print_mixin.py   #
 │ ├── test_product.py       # Тесты для Product
 │ └── test_smartphone.py    # Тесты для Smartphone
 ├── .flake8                 # Конфигурация линтера

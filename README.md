@@ -200,19 +200,19 @@ grass = LawnGrass("Газон", "Для дачи", 2000, 15, "Россия", "7-
 .
 ├── src/
 │ ├── __init__.py
-│ ├── base_product.py       #
+│ ├── base_product.py       # Базовый абстрактный класс
 │ ├── category.py           # Базовый класс Сategory (категории продуктов) 
 │ ├── lawngrass.py          # Подкласс от класса Product (товары для озеленения)
-│ ├── print_mixin.py        # 
+│ ├── print_mixin.py        # Класс-миксин
 │ ├── product.py            # Базовый класс Product (продуктов)
 │ └── smartphone.py         # Подкласс от класса Product (товары смартфоны)
 ├── tests/
 │ ├── __init__.py
 │ ├── conftest.py           # Модуль ля фикстур
-│ ├── test_base_product.py  #
+│ ├── test_base_product.py  # Тесты для BaseProduct
 │ ├── test_category.py      # Тесты для Category
 │ ├── test_lawngrass.py     # Тесты для Lawngrass
-│ ├── test_print_mixin.py   #
+│ ├── test_print_mixin.py   # Тесты для класса-миксин PrintMixin 
 │ ├── test_product.py       # Тесты для Product
 │ └── test_smartphone.py    # Тесты для Smartphone
 ├── .flake8                 # Конфигурация линтера

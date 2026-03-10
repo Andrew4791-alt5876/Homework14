@@ -64,7 +64,7 @@ def test_add_product_valid(
     category.add_product(sample_product)
     # Проверяем, что продукт добавлен в список
     assert (
-        sample_product in category._Category__products # type: ignore
+        sample_product in category._Category__products  # type: ignore
     )  # доступ к приватному атрибуту для теста
     assert category.products == f"{sample_product}\n"
     assert Category.product_count == 1
@@ -74,7 +74,7 @@ def test_add_product_invalid_type(reset_counts: None) -> Any:
     """Тест добавления объекта неверного типа (должен вызывать TypeError)."""
     category = Category("Электроника", "Описание", [])
     with pytest.raises(TypeError):
-        category.add_product("не продукт") # type: ignore
+        category.add_product("не продукт")  # type: ignore
 
 
 def test_add_product_multiple(

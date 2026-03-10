@@ -43,7 +43,7 @@ def product2() -> Product:
 @pytest.fixture
 def product3() -> Product:
     """Фикстура для третьего продукта."""
-    return Product("Товар 3", "Описание 3", 300.0, 0)
+    return Product("Товар 3", "Описание 3", 300.0, 1)
 
 
 @pytest.fixture
@@ -59,7 +59,7 @@ def empty_category() -> Category:
 
 
 @pytest.fixture(autouse=True)
-def reset_category_counters() -> None:
+def reset_counts() -> None:
     """Сбрасывает счетчики категорий перед каждым тестом."""
     Category.category_count = 0
     Category.product_count = 0

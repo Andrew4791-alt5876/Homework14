@@ -6,121 +6,166 @@ from src.category import Category
 from src.product import Product
 
 
-def test_category_initialization(
-    category_with_products: Category, product1: Product, product2: Product
+def test_init_empty_products(reset_counts: None) -> None:
+    """Тест инициализации категории без продуктов."""
+    category = Category("Электроника", "Разные устройства", [])
+    assert category.name == "Электроника"
+    assert category.description == "Разные устройства"
+    # Проверяем приватный атрибут через property
+    assert category.products == ""
+    assert Category.category_count == 1
+    assert Category.product_count == 0
+
+
+def test_init_with_products(
+    reset_counts: None, sample_product: Product, another_product: Product
 ) -> None:
-    """Проверка инициализации атрибутов категории."""
-    assert category_with_products.name == "Электроника"
-    assert category_with_products.description == "Разные товары"
-    # Проверяем, что приватный список не доступен напрямую
-    with pytest.raises(AttributeError):
-        _ = category_with_products.__products
-    # Проверяем содержимое через свойство products
-    products_str = category_with_products.products
-    assert str(product1) in products_str
-    assert str(product2) in products_str
-    assert products_str.endswith("\n")
-
-
-def test_empty_category_initialization(empty_category: Category) -> None:
-    """Проверка инициализации пустой категории."""
-    assert empty_category.name == "Пустая"
-    assert empty_category.description == "Нет товаров"
-    assert empty_category.products == ""  # пустая строка
-
-
-def test_category_counters_on_creation(
-    category_with_products: Category,
-    empty_category: Category,
-    product1: Product,
-    product2: Product,
-) -> None:
-    """Проверка увеличения счетчиков класса при создании категорий."""
-    # После создания category_with_products (2 продукта)
-    assert Category.category_count == 2
+    """Тест инициализации категории с продуктами."""
+    products = [sample_product, another_product]
+    category = Category("Электроника", "Разные устройства", products)
+    assert category.name == "Электроника"
+    assert category.description == "Разные устройства"
+    # Проверяем через property (должны быть строки продуктов)
+    expected_products = f"{sample_product}\n{another_product}\n"
+    assert category.products == expected_products
+    assert Category.category_count == 1
     assert Category.product_count == 2
-    # Создаём ещё одну категорию с одним продуктом
-    cat2 = Category("Одежда", "Одежда и обувь", [product1])
-    assert Category.category_count == 3
-    assert Category.product_count == 3  # 2 + 1
-    assert isinstance(cat2, Category)
-    # Пустая категория не увеличивает product_count
-    empty = Category("Книги", "Ничего нет", [])
-    assert Category.category_count == 4
-    assert Category.product_count == 3  # осталось 3
-    assert isinstance(empty, Category)
 
 
-def test_add_product(
-    category_with_products: Category, product3: Product
+def test_category_count_increment(reset_counts: None) -> None:
+    """Проверка увеличения счетчика категорий."""
+    cat1 = Category("Категория 1", "Описание 1", [])
+    assert Category.category_count == 1
+    cat2 = Category("Категория 2", "Описание 2", [])
+    assert Category.category_count == 2
+    assert isinstance(cat1, Category) is True
+    assert isinstance(cat2, Category) is True
+
+
+def test_product_count_increment_on_init(
+    reset_counts: None, sample_product: Product
 ) -> None:
-    """Добавление продукта в категорию."""
-    initial_count = Category.product_count
-    category_with_products.add_product(product3)
-    # Проверяем, что product_count увеличился
-    assert Category.product_count == initial_count + 1
-    # Проверяем, что продукт появился в products
-    assert str(product3) in category_with_products.products
+    """Проверка увеличения счетчика продуктов при
+    создании категории с продуктами."""
+    Category("Категория", "Описание", [sample_product])
+    assert Category.product_count == 1
+    # Добавим еще одну категорию с двумя продуктами
+    p1 = Product("A", "desc", 10.0, 1)
+    p2 = Product("B", "desc", 20.0, 2)
+    Category("Другая", "Описание", [p1, p2])
+    assert Category.product_count == 3
 
 
-def test_add_product_invalid_type(category_with_products: Any) -> None:
-    """Добавление объекта не Product вызывает TypeError."""
+def test_add_product_valid(
+    reset_counts: None, sample_product: Product
+) -> Any:
+    """Тест добавления корректного продукта."""
+    category = Category("Электроника", "Описание", [])
+    category.add_product(sample_product)
+    # Проверяем, что продукт добавлен в список
+    assert (
+        sample_product in category._Category__products # type: ignore
+    )  # доступ к приватному атрибуту для теста
+    assert category.products == f"{sample_product}\n"
+    assert Category.product_count == 1
+
+
+def test_add_product_invalid_type(reset_counts: None) -> Any:
+    """Тест добавления объекта неверного типа (должен вызывать TypeError)."""
+    category = Category("Электроника", "Описание", [])
     with pytest.raises(TypeError):
-        category_with_products.add_product("не продукт")
-    with pytest.raises(TypeError):
-        category_with_products.add_product(123)
-
-
-def test_category_str(category_with_products: Category) -> None:
-    """Проверка строкового представления категории."""
-    # Сумма quantity = 5 + 10 = 15
-    expected = "Электроника, количество продуктов: 15 шт."
-    assert str(category_with_products) == expected
-
-
-def test_category_str_empty(empty_category: Category) -> None:
-    """Проверка строкового представления пустой категории."""
-    expected = "Пустая, количество продуктов: 0 шт."
-    assert str(empty_category) == expected
-
-
-def test_products_property_multiple(
-    category_with_products: Category, product1: Product, product2: Product
-) -> None:
-    """Свойство products возвращает все продукты через перевод строки."""
-    products_str = category_with_products.products
-    lines = products_str.splitlines()
-    # Должно быть 2 строки (по одной на продукт)
-    assert len(lines) == 2
-    assert lines[0] == str(product1)
-    assert lines[1] == str(product2)
+        category.add_product("не продукт") # type: ignore
 
 
 def test_add_product_multiple(
-    category_with_products: Category,
-    product1: Product,
-    product2: Product,
-    product3: Product,
+    reset_counts: None, sample_product: Product, another_product: Product
 ) -> None:
-    """Добавление нескольких продуктов и проверка счетчика."""
-    # Уже есть 2 продукта, product_count = 2
-    category_with_products.add_product(product3)
-    category_with_products.add_product(product1)  # дубликат, но разрешён
-    assert Category.product_count == 4  # было 2, добавили 2
-    # Проверяем наличие всех продуктов в строке
-    prod_str = category_with_products.products
-    assert prod_str.count(str(product1)) == 2  # product1 встречается дважды
-    assert str(product2) in prod_str
-    assert str(product3) in prod_str
+    """Тест добавления нескольких продуктов и подсчет product_count."""
+    category = Category("Электроника", "Описание", [])
+    category.add_product(sample_product)
+    category.add_product(another_product)
+    assert Category.product_count == 2
+    assert category.products == f"{sample_product}\n{another_product}\n"
 
 
-def test_product_count_with_duplicate_products(product1: Product) -> None:
-    """Проверка, что один и тот же объект может быть
-    в нескольких категориях."""
-    cat1 = Category("Кат1", "Описание1", [product1])
-    cat2 = Category("Кат2", "Описание2", [product1])
-    assert (
-        Category.product_count == 2
-    )  # product1 учтён дважды (объект один, но ссылки разные)
-    assert isinstance(cat1, Category)
-    assert isinstance(cat2, Category)
+def test_products_property_empty(reset_counts: None) -> None:
+    """Проверка свойства products для пустой категории."""
+    category = Category("Пустая", "Описание", [])
+    assert category.products == ""
+
+
+def test_products_property_with_products(
+    reset_counts: None, sample_product: Product, another_product: Product
+) -> None:
+    """Проверка свойства products для категории с продуктами."""
+    category = Category(
+        "Электроника", "Описание", [sample_product, another_product]
+    )
+    expected = f"{sample_product}\n{another_product}\n"
+    assert category.products == expected
+
+
+def test_str_method(reset_counts: None) -> None:
+    """Тест строкового представления категории."""
+    p1 = Product("Товар1", "Описание1", 100.0, 3)
+    p2 = Product("Товар2", "Описание2", 200.0, 5)
+    category = Category("Категория", "Описание", [p1, p2])
+    expected = "Категория, количество продуктов: 8 шт."  # 3+5=8
+    assert str(category) == expected
+
+
+def test_str_method_empty(reset_counts: None) -> None:
+    """Тест строкового представления пустой категории."""
+    category = Category("Пустая", "Описание", [])
+    expected = "Пустая, количество продуктов: 0 шт."
+    assert str(category) == expected
+
+
+def test_middle_price_non_empty(reset_counts: None) -> None:
+    """Тест среднего ценника для категории с продуктами."""
+    p1 = Product("A", "desc", 100.0, 1)
+    p2 = Product("B", "desc", 200.0, 2)
+    p3 = Product("C", "desc", 300.0, 3)
+    category = Category("Тест", "Описание", [p1, p2, p3])
+    # Средняя цена = (100 + 200 + 300) / 3 = 200.0
+    assert category.middle_price() == 200.0
+
+
+def test_middle_price_rounding(reset_counts: None) -> None:
+    """Тест округления среднего ценника до двух знаков."""
+    p1 = Product("A", "desc", 100.123, 1)
+    p2 = Product("B", "desc", 200.456, 2)
+    category = Category("Тест", "Описание", [p1, p2])
+    # (100.123 + 200.456) / 2 = 300.579 / 2 = 150.2895 -> округление до 150.29
+    assert category.middle_price() == 150.29
+
+
+def test_middle_price_empty(reset_counts: None) -> None:
+    """Тест среднего ценника для пустой категории (должен вернуть 0.0)."""
+    category = Category("Пустая", "Описание", [])
+    assert category.middle_price() == 0.0
+
+
+def test_private_products_accessible_only_via_property(
+    reset_counts: None, sample_product: Product
+) -> None:
+    """Проверка, что список продуктов приватный и
+    доступен только через property."""
+    category = Category("Электроника", "Описание", [sample_product])
+    with pytest.raises(AttributeError):
+        _ = (
+            category.__products
+        )  # должно вызывать AttributeError из-за name mangling
+    # Но можно проверить, что через property возвращается строка, а не список
+    assert isinstance(category.products, str)
+
+
+def test_category_count_persistent_across_instances(
+    reset_counts: None,
+) -> None:
+    """Проверка, что category_count увеличивается с каждой новой категорией."""
+    assert Category.category_count == 0
+    Category("Кат1", "Описание1", [])
+    assert Category.category_count == 1
+    Category("Кат2", "Описание2", [])
+    assert Category.category_count == 2

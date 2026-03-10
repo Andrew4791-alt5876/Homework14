@@ -14,6 +14,14 @@ def test_product_initialization(sample_product: Product) -> None:
     assert sample_product.quantity == 10
 
 
+def test_init_zero_quantity_raises() -> None:
+    """Тест: при quantity=0 должно выбрасываться ValueError."""
+    with pytest.raises(
+        ValueError, match="Товар с нулевым количеством не может быть добавлен"
+    ):
+        Product("Телефон", "Смартфон", 50000.0, 0)
+
+
 def test_new_product_classmethod() -> None:
     """Проверка создания продукта из словаря."""
     data = {
@@ -102,7 +110,7 @@ def test_product_add_different_type(sample_product: Product) -> None:
 
 
 def test_product_add_with_non_product(sample_product: Product) -> None:
-    """Сложение с числом, строкой и т.д. вызывает TypeError."""
+    """Сложение с числом, строкой и т.д. Вызывает TypeError."""
     with pytest.raises(TypeError):
         _ = sample_product + 100
     with pytest.raises(TypeError):
@@ -115,11 +123,3 @@ def test_product_add_self(sample_product: Product) -> None:
     """Сложение продукта с самим собой удваивает стоимость."""
     expected = 2 * (100.0 * 10)
     assert sample_product + sample_product == expected
-
-
-def test_product_add_zero_quantity(sample_product: Product) -> None:
-    """Если у одного из продуктов quantity = 0,
-    результат равен стоимости другого."""
-    zero_product = Product("Ноль", "Нулевое количество", price=100, quantity=0)
-    expected = sample_product.price * sample_product.quantity
-    assert sample_product + zero_product == expected

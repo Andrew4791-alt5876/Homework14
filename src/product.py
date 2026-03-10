@@ -13,6 +13,10 @@ class Product(BaseProduct, PrintMixin):
         self.name = name
         self.description = description
         self.__price = price
+        if quantity == 0:
+            raise ValueError(
+                "Товар с нулевым количеством не может быть добавлен"
+            )
         self.quantity = quantity
         super().__init__()
 
@@ -56,8 +60,8 @@ class Product(BaseProduct, PrintMixin):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other: Any) -> Any:
-        """Магический метод, который позволяет прибавлять к экземпляру
-        класса объект произвольного типа данных."""
+        """Магический метод, который позволяет складывать общую сумму
+        двух продуктов на складе."""
         if type(self) is not type(other):
             raise TypeError
         return (self.__price * self.quantity) + (
